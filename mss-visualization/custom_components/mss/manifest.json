@@ -1,0 +1,11 @@
+{
+  "domain": "mss",
+  "name": "MSS Visualization",
+  "version": "0.1.0",
+  "documentation": "https://github.com/your-repository/mss",
+  "dependencies": ["mqtt"],
+  "codeowners": [],
+  "config_flow": true,
+  "single_config_entry": true,
+  "integration_type": "hub"
+}

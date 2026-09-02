@@ -9,6 +9,11 @@
   "containerEnv": {
     "PYTHONASYNCIODEBUG": "1"
   },
+  "mounts": [
+    "source=C:/Users/dpereira/Desktop/Home/frontend,target=/workspaces/frontend,type=bind,consistency=cached",
+    "source=C:/Users/dpereira/Desktop/Home/media,target=/media,type=bind"
+  ],
+
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
