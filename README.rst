@@ -1,285 +1,272 @@
-# MSS Visualization for Home Assistant
+MSS Visualization for Home Assistant
+====================================
 
 MSS Visualization is a custom visualization layer built on top of Home Assistant Core.
 
+.. image:: mss-visualization/docs/images/image.png
+   :alt: MSS Visualization dashboard
+   :width: 100%
+
 It provides:
 
-- Dynamic MSS MQTT sensor discovery
-- Control Plan aware data grouping
-- Dynamic measurement visualization
-- MQTT image support
-- Custom MSS views and overlays
-- Automatic view routing
-- Configurable shapes and data bindings
-- Persistent local images and backgrounds
-- Fullscreen visualization and editor interfaces
+* Dynamic MSS MQTT sensor discovery
+* Control Plan aware data grouping
+* Dynamic measurement visualization
+* MQTT image support
+* Custom MSS views and overlays
+* Automatic view routing
+* Configurable shapes and data bindings
+* Persistent local images and backgrounds
+* Fullscreen visualization and editor interfaces
 
----
 
-# Repository Overview
+.. image:: mss-visualization/docs/images/image2.png
+   :alt: MSS View Editor
+   :width: 100%
+
+
+Repository overview
+-------------------
 
 This repository is a fork of the official Home Assistant Core repository.
 
 Two Git remotes are normally used:
 
-```text
-origin   → MSS project fork
-upstream → official Home Assistant Core
-```
+.. code-block:: text
+
+   origin   → MSS project fork
+   upstream → official Home Assistant Core
 
 The main MSS development branch is:
 
-```text
-feature/mss-visualization
-```
+.. code-block:: text
 
-The `dev` branch is kept aligned with the official Home Assistant `dev` branch.
+   feature/mss-visualization
+
+The ``dev`` branch is kept aligned with the official Home Assistant ``dev`` branch.
 
 Typical structure:
 
-```text
-home-assistant/core upstream/dev
-            │
-            ▼
-           dev
-            │
-            ▼
-feature/mss-visualization
-```
+.. code-block:: text
 
-MSS development should be performed on `feature/mss-visualization`, not directly on `dev`.
+   home-assistant/core upstream/dev
+               │
+               ▼
+              dev
+               │
+               ▼
+   feature/mss-visualization
 
----
+MSS development should be performed on ``feature/mss-visualization``, not directly on ``dev``.
 
-# Development Environment
+Development environment
+-----------------------
 
-## Recommended Setup
+Recommended setup:
 
-Recommended development environment:
-
-- Windows 11
-- Docker Desktop
-- VS Code
-- Dev Containers extension
-- Git
+* Windows 11
+* Docker Desktop
+* VS Code
+* Dev Containers extension
+* Git
+* Mosquitto MQTT broker
 
 VS Code is recommended because the repository already contains a Home Assistant Dev Container configuration.
 
 The source code itself is not tied to VS Code, but the Dev Container provides the easiest reproducible Home Assistant development and test environment.
 
----
+Setup
+-----
 
-# Setup
+Clone the repository:
 
-A collaborator can clone the repository with:
+.. code-block:: bash
 
-```bash
-git clone https://github.com/davidspereira00-cmyk/home_core.git
-cd home_core
-git fetch origin
-git switch feature/mss-visualization
-```
+   git clone https://github.com/davidspereira00-cmyk/home_core.git
+   cd home_core
+   git fetch origin
+   git switch feature/mss-visualization
+
+If the branch is not yet available locally:
+
+.. code-block:: bash
+
+   git switch -c feature/mss-visualization \
+     --track origin/feature/mss-visualization
 
 If the repository is private, the collaborator must first be added through GitHub repository access settings.
 
-For the easiest reproducible development and testing workflow, use:
-
-- VS Code
-- Docker Desktop
-- Dev Containers
-
-The source can be edited in other IDEs, but the current Home Assistant development workflow is built around the VS Code Dev Container.
-
----
-
-# Current Branch Purpose
-
-```text
-dev
-```
-
-Purpose:
-
-```text
-Clean Home Assistant Core base synchronized with upstream/dev
-```
-
-```text
-feature/mss-visualization
-```
-
-Purpose:
-
-```text
-Latest Home Assistant Core
-+
-MSS Visualization development
-```
-
-
-```bash
-git switch -c feature/mss-visualization \
-  --track origin/feature/mss-visualization
-```
-
----
-
-# Open the Dev Container
+Open the Dev Container
+----------------------
 
 Open the cloned repository in VS Code.
 
-Install the extension:
-
-```text
-Dev Containers
-```
+Install the ``Dev Containers`` extension.
 
 Then use:
 
-```text
-Ctrl + Shift + P
-```
+.. code-block:: text
+
+   Ctrl + Shift + P
 
 and select:
 
-```text
-Dev Containers: Reopen in Container
-```
+.. code-block:: text
+
+   Dev Containers: Reopen in Container
 
 The repository should be available inside the container at:
 
-```text
-/workspaces/home_core
-```
+.. code-block:: text
 
----
+   /workspaces/home_core
 
-# Important: MSS Source Copy vs Home Assistant Runtime Copy
+The development container should be used for normal Home Assistant development and testing.
+
+Current branch purpose
+----------------------
+
+``dev``
+
+.. code-block:: text
+
+   Clean Home Assistant Core base synchronized with upstream/dev
+
+``feature/mss-visualization``
+
+.. code-block:: text
+
+   Latest Home Assistant Core
+   +
+   MSS Visualization development
+
+MSS source copy vs Home Assistant runtime copy
+----------------------------------------------
 
 The project currently keeps **two copies of the MSS files for different purposes**.
 
 This distinction is intentional and important.
 
-## 1. Git-tracked MSS source
+Git-tracked MSS source
+~~~~~~~~~~~~~~~~~~~~~~
 
-The version that is tracked by Git lives here:
+The version tracked by Git lives here:
 
-```text
-mss-visualization/
-```
+.. code-block:: text
+
+   mss-visualization/
 
 Structure:
 
-```text
-mss-visualization/
-├── custom_components/
-│   └── mss/
-│       ├── __init__.py
-│       ├── config_flow.py
-│       ├── manifest.json
-│       ├── sensor.py
-│       └── websocket.py
-│
-└── www/
-    ├── mss/
-    │   └── icons/
-    ├── mss-default-views.js
-    ├── mss-field-resolver.js
-    ├── mss-icons.js
-    ├── mss-measurements-card.js
-    ├── mss-overlay-renderer.js
-    ├── mss-panel-styles.js
-    ├── mss-routing-status.js
-    ├── mss-value-decoder.js
-    ├── mss-view-card.js
-    ├── mss-view-dialog.js
-    ├── mss-view-editor-dialog.js
-    ├── mss-view-renderer.js
-    └── mss-view-router.js
-```
+.. code-block:: text
+
+   mss-visualization/
+   ├── custom_components/
+   │   └── mss/
+   │       ├── __init__.py
+   │       ├── config_flow.py
+   │       ├── manifest.json
+   │       ├── sensor.py
+   │       └── websocket.py
+   │
+   └── www/
+       ├── mss/
+       │   └── icons/
+       ├── mss-default-views.js
+       ├── mss-field-resolver.js
+       ├── mss-icons.js
+       ├── mss-measurements-card.js
+       ├── mss-overlay-renderer.js
+       ├── mss-panel-styles.js
+       ├── mss-routing-status.js
+       ├── mss-value-decoder.js
+       ├── mss-view-card.js
+       ├── mss-view-dialog.js
+       ├── mss-view-editor-dialog.js
+       ├── mss-view-renderer.js
+       └── mss-view-router.js
 
 This is the copy that should be:
 
-- committed
-- reviewed
-- pushed
-- shared with other developers
-- used as the source-controlled MSS codebase
+* committed
+* reviewed
+* pushed
+* shared with other developers
+* used as the source-controlled MSS codebase
 
-## 2. Home Assistant runtime copy
+Home Assistant runtime copy
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Home Assistant itself loads the MSS integration and frontend files from:
 
-```text
-config/custom_components/mss/
-config/www/
-```
+.. code-block:: text
+
+   config/custom_components/mss/
+   config/www/
 
 These are the runtime locations used by the Home Assistant development instance.
 
-The `config/` directory is ignored by Git because it contains local Home Assistant configuration, runtime data and machine-specific files.
+The ``config/`` directory is ignored by Git because it contains local Home Assistant configuration, runtime data and machine-specific files.
 
 Therefore:
 
-```text
-mss-visualization/
-```
+.. code-block:: text
+
+   mss-visualization/
 
 is the **Git/source copy**, while:
 
-```text
-config/
-```
+.. code-block:: text
+
+   config/
 
 contains the **runtime copy used by Home Assistant**.
 
 Current relationship:
 
-```text
-Git tracked source                      Home Assistant runtime
-─────────────────────────────           ─────────────────────────────
-mss-visualization/www/           →      config/www/
+.. code-block:: text
 
-mss-visualization/
-custom_components/mss/           →      config/custom_components/mss/
-```
+   Git-tracked source                         Home Assistant runtime
+   ─────────────────────────────              ─────────────────────────────
+   mss-visualization/www/              →      config/www/
+
+   mss-visualization/
+   custom_components/mss/              →      config/custom_components/mss/
 
 At the moment these are separate physical copies.
 
-Changes made only in `mss-visualization/` are not automatically reflected in `config/`, and changes made only in `config/` are not automatically committed to Git.
+Changes made only in ``mss-visualization/`` are not automatically reflected in ``config/``, and changes made only in ``config/`` are not automatically committed to Git.
 
 When changing MSS code, make sure the relevant source and runtime copies remain synchronized.
 
-A future development improvement may replace the duplicated source files with selective symlinks or an automated sync process, while keeping runtime-generated image directories separate.
+A future improvement may replace the duplicated source files with selective symlinks or an automated sync process, while keeping runtime-generated image directories separate.
 
----
-
-# Why `config/` Is Not Tracked
+Why ``config/`` is not tracked
+------------------------------
 
 The Home Assistant development configuration contains local and runtime-specific content.
 
 The repository therefore ignores:
 
-```text
-/config
-```
+.. code-block:: text
+
+   /config
 
 This means files such as:
 
-```text
-config/www/
-config/custom_components/mss/
-```
+.. code-block:: text
+
+   config/www/
+   config/custom_components/mss/
 
 do not appear in Git status and are not pushed to GitHub.
 
-The `mss-visualization/` folder was created specifically to provide a trackable source location for MSS.
+The ``mss-visualization/`` folder was created specifically to provide a trackable source location for MSS.
 
-Do not remove the global `/config` ignore rule simply to track MSS files.
+Do not remove the global ``/config`` ignore rule simply to track MSS files.
 
----
-
-# Runtime Images and Backgrounds
+Runtime images and backgrounds
+------------------------------
 
 MSS supports uploaded view backgrounds and local overlay images.
 
@@ -287,19 +274,17 @@ These are runtime-generated files and should remain outside normal source contro
 
 Home Assistant writes them to:
 
-```text
-config/www/mss-view-backgrounds/
-config/www/mss-view-images/
-```
+.. code-block:: text
 
-They are used by MSS at runtime.
+   config/www/mss-view-backgrounds/
+   config/www/mss-view-images/
 
 The corresponding paths under the tracked source tree are ignored:
 
-```text
-/mss-visualization/www/mss-view-backgrounds/
-/mss-visualization/www/mss-view-images/
-```
+.. code-block:: text
+
+   /mss-visualization/www/mss-view-backgrounds/
+   /mss-visualization/www/mss-view-images/
 
 This is intentional.
 
@@ -307,274 +292,302 @@ Do not commit user-uploaded or generated runtime images unless a specific image 
 
 For example, a fixed project asset such as:
 
-```text
-mss-visualization/www/views/body.jpg
-```
+.. code-block:: text
+
+   mss-visualization/www/views/body.jpg
 
 may be tracked.
 
----
-
-# Home Assistant Custom Component
+Home Assistant custom component
+-------------------------------
 
 The MSS backend integration lives in:
 
-```text
-mss-visualization/custom_components/mss/
-```
+.. code-block:: text
+
+   mss-visualization/custom_components/mss/
 
 The Home Assistant runtime equivalent is:
 
-```text
-config/custom_components/mss/
-```
+.. code-block:: text
+
+   config/custom_components/mss/
 
 Main files:
 
-```text
-__init__.py
-config_flow.py
-manifest.json
-sensor.py
-websocket.py
-```
+.. code-block:: text
+
+   __init__.py
+   config_flow.py
+   manifest.json
+   sensor.py
+   websocket.py
 
 Responsibilities include:
 
-- MQTT processing
-- dynamic MSS entities
-- Control Plan grouping
-- image field handling
-- persistent structural schema
-- MSS WebSocket commands
-- view persistence
-- local image/background upload handling
+* MQTT processing
+* dynamic MSS entities
+* Control Plan grouping
+* image field handling
+* persistent structural schema
+* MSS WebSocket commands
+* view persistence
+* local image/background upload handling
 
----
-
-# MSS Frontend
+MSS frontend
+------------
 
 The source-controlled MSS frontend lives in:
 
-```text
-mss-visualization/www/
-```
+.. code-block:: text
+
+   mss-visualization/www/
 
 The Home Assistant runtime equivalent is:
 
-```text
-config/www/
-```
+.. code-block:: text
+
+   config/www/
 
 Important frontend files include:
 
-```text
-mss-view-editor-dialog.js
-mss-view-dialog.js
-mss-view-card.js
-mss-view-router.js
-mss-view-renderer.js
-mss-overlay-renderer.js
-mss-field-resolver.js
-mss-value-decoder.js
-mss-measurements-card.js
-mss-panel-styles.js
-mss-icons.js
-mss-default-views.js
-mss-routing-status.js
-```
+.. code-block:: text
+
+   mss-view-editor-dialog.js
+   mss-view-dialog.js
+   mss-view-card.js
+   mss-view-router.js
+   mss-view-renderer.js
+   mss-overlay-renderer.js
+   mss-field-resolver.js
+   mss-value-decoder.js
+   mss-measurements-card.js
+   mss-panel-styles.js
+   mss-icons.js
+   mss-default-views.js
+   mss-routing-status.js
 
 The Dazzle Line Icons used by MSS are stored under:
 
-```text
-mss-visualization/www/mss/icons/
-```
+.. code-block:: text
+
+   mss-visualization/www/mss/icons/
 
 and have a corresponding runtime location under:
 
-```text
-config/www/mss/icons/
-```
+.. code-block:: text
 
----
+   config/www/mss/icons/
 
-# Updating Home Assistant Core
+Mosquitto and MQTT
+------------------
+
+MSS depends on MQTT and requires a reachable Mosquitto broker for live testing.
+
+The existing development setup uses:
+
+.. code-block:: text
+
+   Port: 1883
+
+Typical local broker address:
+
+.. code-block:: text
+
+   localhost:1883
+
+The exact broker host depends on where Mosquitto is running.
+
+Possible setups include:
+
+* Mosquitto running on the host machine
+* Mosquitto running in Docker
+* Mosquitto running as a Home Assistant add-on in a full Home Assistant OS installation
+
+For the Home Assistant Core Dev Container workflow, make sure the container can reach the configured broker.
+
+MSS topics include:
+
+.. code-block:: text
+
+   MSSReport
+   MSSReport_Test1
+   MSSReport_Test2
+
+The integration dynamically flattens incoming JSON and creates or updates MSS entities.
+
+Live images are handled separately from normal Home Assistant sensor states.
+
+Updating Home Assistant Core
+----------------------------
 
 The official Home Assistant repository is configured as:
 
-```text
-upstream
-```
+.. code-block:: text
 
-To update the local `dev` branch:
+   upstream
 
-```bash
-git switch dev
-git fetch upstream
-git pull --ff-only upstream dev
-```
+To update the local ``dev`` branch:
 
-Verify that local `dev` matches the official Home Assistant branch:
+.. code-block:: bash
 
-```bash
-git rev-parse dev
-git rev-parse upstream/dev
-```
+   git switch dev
+   git fetch upstream
+   git pull --ff-only upstream dev
+
+Verify that local ``dev`` matches the official Home Assistant branch:
+
+.. code-block:: bash
+
+   git rev-parse dev
+   git rev-parse upstream/dev
 
 The hashes should be identical.
 
 Update the fork:
 
-```bash
-git push origin dev
-```
+.. code-block:: bash
 
----
+   git push origin dev
 
-# Updating the MSS Branch After Home Assistant Changes
+Updating the MSS branch after Home Assistant changes
+----------------------------------------------------
 
-After updating `dev`:
+After updating ``dev``:
 
-```bash
-git switch feature/mss-visualization
-```
+.. code-block:: bash
+
+   git switch feature/mss-visualization
 
 Rebase the MSS work onto the latest Home Assistant version:
 
-```bash
-git rebase dev
-```
+.. code-block:: bash
+
+   git rebase dev
 
 If conflicts occur:
 
-1. Resolve the conflicted files.
-2. Stage each resolved file:
+#. Resolve the conflicted files.
+#. Stage each resolved file:
 
-```bash
-git add <file>
-```
+   .. code-block:: bash
 
-3. Continue the rebase:
+      git add <file>
 
-```bash
-git rebase --continue
-```
+#. Continue the rebase:
+
+   .. code-block:: bash
+
+      git rebase --continue
 
 After a successful rebase, update the remote feature branch:
 
-```bash
-git push --force-with-lease origin feature/mss-visualization
-```
+.. code-block:: bash
 
-Use `--force-with-lease`, not plain `--force`.
+   git push --force-with-lease origin feature/mss-visualization
 
----
+Use ``--force-with-lease``, not plain ``--force``.
 
-# Git Remotes and Safety
+Git remotes and safety
+----------------------
 
 Typical remote configuration:
 
-```text
-origin   → https://github.com/davidspereira00-cmyk/home_core.git
-upstream → https://github.com/home-assistant/core.git
-```
+.. code-block:: text
 
-`origin` is the MSS fork.
+   origin   → https://github.com/davidspereira00-cmyk/home_core.git
+   upstream → https://github.com/home-assistant/core.git
 
-`upstream` is used only to retrieve official Home Assistant changes.
+``origin`` is the MSS fork.
+
+``upstream`` is used only to retrieve official Home Assistant changes.
 
 MSS work should never be pushed to the official Home Assistant repository.
 
 To make accidental upstream pushes harder, the upstream push URL can be disabled:
 
-```bash
-git remote set-url --push upstream DISABLED
-```
+.. code-block:: bash
+
+   git remote set-url --push upstream DISABLED
 
 Check remotes:
 
-```bash
-git remote -v
-```
+.. code-block:: bash
 
----
+   git remote -v
 
-
-Home Assistant Core blocks direct commits to the `dev` branch through its pre-commit hooks.
+Home Assistant Core blocks direct commits to the ``dev`` branch through its pre-commit hooks.
 
 Always make MSS changes on a feature branch.
 
----
-
-# Code Quality
+Code quality
+------------
 
 Home Assistant Core uses pre-commit validation.
 
 Before committing Python changes:
 
-```bash
-ruff check mss-visualization/custom_components/mss/
-```
+.. code-block:: bash
+
+   ruff check mss-visualization/custom_components/mss/
 
 Apply safe Ruff fixes when appropriate:
 
-```bash
-ruff check mss-visualization/custom_components/mss/ --fix
-```
+.. code-block:: bash
+
+   ruff check mss-visualization/custom_components/mss/ --fix
 
 After Ruff modifies files, stage them again:
 
-```bash
-git add mss-visualization/custom_components/mss/
-```
+.. code-block:: bash
+
+   git add mss-visualization/custom_components/mss/
 
 The normal commit command will also run Home Assistant's configured pre-commit checks.
 
----
-
-# Ruff Version
+Ruff version
+------------
 
 After pulling new Home Assistant changes, the required Ruff version may change.
 
 Check:
 
-```bash
-ruff --version
-```
+.. code-block:: bash
+
+   ruff --version
 
 If the version in the active Home Assistant virtual environment is too old:
 
-```bash
-uv pip install --upgrade ruff
-```
+.. code-block:: bash
+
+   uv pip install --upgrade ruff
 
 Then check again:
 
-```bash
-ruff --version
-```
+.. code-block:: bash
+
+   ruff --version
 
 When multiple Ruff installations exist, inspect them with:
 
-```bash
-which -a ruff
-```
+.. code-block:: bash
 
-The Ruff executable inside the active `ha-venv` normally takes precedence.
+   which -a ruff
 
----
+The Ruff executable inside the active ``ha-venv`` normally takes precedence.
 
-# Files That Should Not Be Committed
+Files that should not be committed
+----------------------------------
 
 Do not commit:
 
-```text
-config/
-mss-visualization-test/
-mss-visualization-test.zip
-mss-visualization/www/mss-view-images/
-mss-visualization/www/mss-view-backgrounds/
-```
+.. code-block:: text
+
+   config/
+   mss-visualization-test/
+   mss-visualization-test.zip
+   mss-visualization/www/mss-view-images/
+   mss-visualization/www/mss-view-backgrounds/
 
 The first is Home Assistant runtime configuration.
 
@@ -582,44 +595,12 @@ The test folder and ZIP are local test artifacts.
 
 The image/background folders contain runtime-generated files.
 
----
-
-
-# Next Documentation Areas
-
-Useful documentation still to add:
-
-1. Initial Home Assistant configuration
-2. MSS integration installation/synchronization into `config/`
-3. Required frontend resource registration
-4. MQTT broker setup
-5. MSSReport topic structure
-6. Example MQTT payloads
-7. Running and debugging Home Assistant
-8. MSS architecture and file responsibilities
-9. View Editor usage
-10. Automatic routing behavior
-11. Image handling
-12. Troubleshooting
-
-
-
-
-
-
-
-//// Home Assistant
-
-
-
 Home Assistant |Chat Status|
-=================================================================================
+============================
 
 Open source home automation that puts local control and privacy first. Powered by a worldwide community of tinkerers and DIY enthusiasts. Perfect to run on a Raspberry Pi or a local server.
 
-Check out `home-assistant.io <https://home-assistant.io>`__ for `a
-demo <https://demo.home-assistant.io>`__, `installation instructions <https://home-assistant.io/getting-started/>`__,
-`tutorials <https://home-assistant.io/getting-started/automation/>`__ and `documentation <https://home-assistant.io/docs/>`__.
+Check out `home-assistant.io <https://home-assistant.io>`__ for `a demo <https://demo.home-assistant.io>`__, `installation instructions <https://home-assistant.io/getting-started/>`__, `tutorials <https://home-assistant.io/getting-started/automation/>`__ and `documentation <https://home-assistant.io/docs/>`__.
 
 |screenshot-states|
 
@@ -628,11 +609,9 @@ Featured integrations
 
 |screenshot-integrations|
 
-The system is built using a modular approach so support for other devices or actions can be implemented easily. See also the `section on architecture <https://developers.home-assistant.io/docs/architecture_index/>`__ and the `section on creating your own
-components <https://developers.home-assistant.io/docs/creating_component_index/>`__.
+The system is built using a modular approach so support for other devices or actions can be implemented easily. See also the `section on architecture <https://developers.home-assistant.io/docs/architecture_index/>`__ and the `section on creating your own components <https://developers.home-assistant.io/docs/creating_component_index/>`__.
 
-If you run into issues while using Home Assistant or during development
-of a component, check the `Home Assistant help section <https://home-assistant.io/help/>`__ of our website for further help and information.
+If you run into issues while using Home Assistant or during development of a component, check the `Home Assistant help section <https://home-assistant.io/help/>`__ of our website for further help and information.
 
 |ohf-logo|
 
