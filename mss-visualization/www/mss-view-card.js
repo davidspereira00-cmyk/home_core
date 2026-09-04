@@ -145,7 +145,6 @@ class MSSViewCard extends HTMLElement {
 
   set hass(hass) {
     this._hass = hass;
-
     // ==========================================================
     // LOAD VIEWS
     // ==========================================================
@@ -1087,15 +1086,270 @@ class MSSViewCard extends HTMLElement {
   // Defines the default grid size for Sections dashboards.
   getGridOptions() {
     return {
-      columns: 6,
+      columns: 12,
       rows: 8,
 
-      min_columns: 3,
-      min_rows: 6,
+      min_columns: 6,
+      min_rows: 5,
 
-      max_columns: 20,
-      max_rows: 12,
+      max_columns: 24,
+      max_rows: 16,
     };
+  }
+
+  static getConfigElement() {
+    return document.createElement('mss-view-card-editor');
+  }
+}
+
+class MSSViewCardEditor extends HTMLElement {
+  constructor() {
+    super();
+
+    this.attachShadow({
+      mode: 'open',
+    });
+
+    this._config = {};
+  }
+
+  set hass(hass) {
+    this._hass = hass;
+  }
+
+  setConfig(config) {
+    this._config = {
+      title: 'MSS View',
+      grid_options: {
+        columns: 12,
+        rows: 8,
+      },
+      ...config,
+      grid_options: {
+        columns: config?.grid_options?.columns ?? 12,
+        rows: config?.grid_options?.rows ?? 8,
+      },
+    };
+
+    this.render();
+  }
+
+  fireConfigChanged() {
+    this.dispatchEvent(
+      new CustomEvent('config-changed', {
+        detail: {
+          config: this._config,
+        },
+        bubbles: true,
+        composed: true,
+      })
+    );
+  }
+
+  render() {
+    if (!this.shadowRoot) {
+      return;
+    }
+
+    const columns = Number(this._config.grid_options?.columns ?? 12);
+    const rows = Number(this._config.grid_options?.rows ?? 8);
+
+    this.shadowRoot.innerHTML = `
+      <div class="editor">
+
+        <label>
+          <span>Title</span>
+          <input
+            id="title"
+            type="text"
+            value="${this._config.title ?? 'MSS View'}"
+          />
+        </label>
+
+        <div class="section">
+          <h3>Card size</h3>
+
+          <p>
+            These values control the Home Assistant Sections grid size.
+          </p>
+
+          <div class="size-row">
+            <span>Width</span>
+
+            <button id="columnsMinus" type="button">−</button>
+
+            <strong>${columns}</strong>
+
+            <button id="columnsPlus" type="button">+</button>
+          </div>
+
+          <div class="size-row">
+            <span>Height</span>
+
+            <button id="rowsMinus" type="button">−</button>
+
+            <strong>${rows}</strong>
+
+            <button id="rowsPlus" type="button">+</button>
+          </div>
+
+          <button id="fullWidth" class="preset" type="button">
+            Full width
+          </button>
+
+          <p class="hint">
+            Equivalent YAML:
+          </p>
+
+          <pre>grid_options:
+  columns: ${columns}
+  rows: ${rows}</pre>
+        </div>
+
+      </div>
+
+      <style>
+        .editor {
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+          padding: 4px;
+        }
+
+        label {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        label span,
+        h3 {
+          font-weight: 700;
+        }
+
+        input {
+          box-sizing: border-box;
+          width: 100%;
+          padding: 9px 10px;
+
+          border: 1px solid var(--divider-color);
+          border-radius: 8px;
+
+          background: var(--secondary-background-color);
+          color: var(--primary-text-color);
+        }
+
+        .section {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .section h3,
+        .section p {
+          margin: 0;
+        }
+
+        .section p {
+          color: var(--secondary-text-color);
+          font-size: 12px;
+        }
+
+        .size-row {
+          display: grid;
+          grid-template-columns: 1fr 36px 48px 36px;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .size-row strong {
+          text-align: center;
+        }
+
+        button {
+          min-height: 34px;
+
+          border: 1px solid var(--divider-color);
+          border-radius: 7px;
+
+          background: var(--secondary-background-color);
+          color: var(--primary-text-color);
+
+          cursor: pointer;
+        }
+
+        button:hover {
+          border-color: #00a586;
+          color: #00a586;
+        }
+
+        .preset {
+          width: fit-content;
+          padding: 0 12px;
+        }
+
+        pre {
+          margin: 0;
+          padding: 10px;
+
+          border-radius: 8px;
+
+          background: var(--secondary-background-color);
+          color: var(--primary-text-color);
+
+          font-size: 12px;
+        }
+
+        .hint {
+          margin-top: 4px !important;
+        }
+      </style>
+    `;
+
+    const titleInput = this.shadowRoot.querySelector('#title');
+
+    titleInput.oninput = (event) => {
+      this._config = {
+        ...this._config,
+        title: event.target.value,
+      };
+
+      this.fireConfigChanged();
+    };
+
+    this.shadowRoot.querySelector('#columnsMinus').onclick = () => {
+      this.updateSize('columns', Math.max(1, columns - 1));
+    };
+
+    this.shadowRoot.querySelector('#columnsPlus').onclick = () => {
+      this.updateSize('columns', Math.min(24, columns + 1));
+    };
+
+    this.shadowRoot.querySelector('#rowsMinus').onclick = () => {
+      this.updateSize('rows', Math.max(1, rows - 1));
+    };
+
+    this.shadowRoot.querySelector('#rowsPlus').onclick = () => {
+      this.updateSize('rows', Math.min(16, rows + 1));
+    };
+
+    this.shadowRoot.querySelector('#fullWidth').onclick = () => {
+      this.updateSize('columns', 24);
+    };
+  }
+
+  updateSize(property, value) {
+    this._config = {
+      ...this._config,
+
+      grid_options: {
+        ...this._config.grid_options,
+        [property]: value,
+      },
+    };
+
+    this.fireConfigChanged();
+    this.render();
   }
 }
 
@@ -1103,6 +1357,10 @@ Object.assign(MSSViewCard.prototype, overlayRenderMethods, viewRenderMethods);
 
 if (!customElements.get('mss-view-card')) {
   customElements.define('mss-view-card', MSSViewCard);
+}
+
+if (!customElements.get('mss-view-card-editor')) {
+  customElements.define('mss-view-card-editor', MSSViewCardEditor);
 }
 
 window.customCards = window.customCards ?? [];

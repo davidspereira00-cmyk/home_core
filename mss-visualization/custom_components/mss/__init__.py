@@ -8,6 +8,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, callback
 
+from .dashboards import async_ensure_mss_dashboards
 from .websocket import async_register_websocket_commands
 
 DOMAIN = "mss"
@@ -137,6 +138,8 @@ async def async_setup_entry(
     entry.async_on_unload(unsubscribe)
 
     _LOGGER.info("MSS Visualization subscribed to MQTT topic MSSReport")
+
+    await async_ensure_mss_dashboards(hass)
 
     return True
 
